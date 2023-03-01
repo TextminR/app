@@ -5,5 +5,5 @@ rsconnect::setAccountInfo(
 )
 
 rsconnect::deployApp(
-  appName = "shiny-example"
+  appName = "textminr"
 )
