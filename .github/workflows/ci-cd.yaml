@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: main
 
-name: TextminR CI/CD
+name: CI/CD
 
 jobs:
   check:
