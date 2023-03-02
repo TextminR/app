@@ -1,10 +1,10 @@
+name: CI-CD
+
 on:
   push:
-    branches: main
+    branches: [main, gh-actions]
   pull_request:
     branches: main
-
-name: CI/CD
 
 jobs:
   check:
@@ -21,8 +21,11 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Activate renv and restore packages with cache
-        uses: r-lib/actions/setup-renv@v2
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
 
       - name: Check R package
         uses: r-lib/actions/check-r-package@v2
@@ -40,8 +43,8 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Activate renv and restore packages with cache
-        uses: r-lib/actions/setup-renv@v2
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
 
       - name: Deploy to shinyapps.io
         env:
