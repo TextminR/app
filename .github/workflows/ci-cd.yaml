@@ -1,10 +1,10 @@
+name: CI-CD
+
 on:
   push:
     branches: [main, gh-actions]
   pull_request:
     branches: main
-
-name: CI-CD
 
 jobs:
   check:
