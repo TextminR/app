@@ -9,7 +9,7 @@ name: CI-CD
 jobs:
   check:
     runs-on: ubuntu-latest
-    container: asuender/textminr:build
+    container: asuender/textminr:test
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
@@ -17,33 +17,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Setup R
-      #   uses: r-lib/actions/setup-r@v2
-      #   with:
-      #     use-public-rspm: true
-
-      - name: Activate renv and restore packages with cache
-        uses: r-lib/actions/setup-renv@v2
-
       - name: Check R package
         uses: r-lib/actions/check-r-package@v2
         
   deploy:
     runs-on: ubuntu-latest
-    container: r-base:latest
+    container: asuender/textminr:test
     if: github.ref == 'refs/heads/main'
     needs: check
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-
-      # - name: Setup R
-      #   uses: r-lib/actions/setup-r@v2
-      #   with:
-      #     use-public-rspm: true
-
-      - name: Activate renv and restore packages with cache
-        uses: r-lib/actions/setup-renv@v2
 
       - name: Deploy to shinyapps.io
         env:
