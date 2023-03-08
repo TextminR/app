@@ -4,3 +4,4 @@
 [![CI/CD](https://github.com/TextminR/app/actions/workflows/ci-cd.yaml/badge.svg)](https://github.com/TextminR/app/actions/workflows/ci-cd.yaml)
 
 Erstes Basis-Repository für das "TextminR"-Projekt.
+.
