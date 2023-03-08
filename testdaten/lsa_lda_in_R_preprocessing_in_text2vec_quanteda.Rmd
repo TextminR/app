@@ -1,0 +1,158 @@
+---
+title: "topic-modelling"
+author: "Elisa Bankl"
+date: "2023-01-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(quanteda)
+library(quanteda.textmodels)
+library(text2vec)
+library(LDAvis)
+library(LSAfun)
+```
+Read in the dataset
+```{r}
+textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
+head(textdata)
+```
+In this notebook, the packages text2vec are used to create a Document Feature Matrix / a sparse Document Term Matrix from the dataset.
+
+
+# text2vec
+
+
+```{r}
+prep_fun = tolower
+
+stem_tokenizer =function(x){
+  lapply(word_tokenizer(x),SnowballC::wordStem)
+}
+
+it = itoken(textdata$text,
+                  preprocessor = prep_fun,
+                  tokenizer = stem_tokenizer,
+                  ids = textdata$doc_id,
+                  progressbar = FALSE)
+vocab = create_vocabulary(it,stopwords=quanteda::stopwords()) 
+vocab = prune_vocabulary(vocab, doc_proportion_max = 0.1, term_count_min = 5)
+
+
+
+vectorizer = vocab_vectorizer(vocab)
+text2vec_DTM = create_dtm(it, vectorizer)
+
+
+```
+
+## text2vec lsa
+
+
+```{r}
+text2vec_lsa = text2vec::LSA$new(n_topics = 40)
+```
+
+
+
+
+```{r}
+
+doc_embeddings =  fit_transform(text2vec_DTM, text2vec_lsa)
+
+```
+
+## plot the nearest neighbors of a word based on the LSA space
+
+```{r}
+LSAfun::plot_neighbors("freedom",10,tvectors=t(text2vec_lsa$components))
+```
+
+
+## text2vec lda
+
+```{r}
+text2vec_lda = text2vec::LDA$new(n_topics = 40, doc_topic_prior = 0.1, topic_word_prior = 0.01)
+```
+
+
+```{r}
+doc_embeddings =  fit_transform(text2vec_DTM, text2vec_lda)
+```
+
+
+## text2vec Visualization
+
+```{r}
+text2vec_lda$plot()
+```
+
+# quanteda
+
+```{r}
+quanteda_corpus = quanteda::corpus(textdata,docid_field="doc_id",text_field="text")
+
+quanteda_DFM <- quanteda::dfm(quanteda::tokens(quanteda_corpus,remove_punct=TRUE,remove_symbols=TRUE))
+
+quanteda_DFM <- quanteda::dfm_select(quanteda_DFM,pattern=quanteda::stopwords("en"),selection="remove")
+
+quanteda_DFM
+
+
+```
+
+
+## quanteda lsa
+
+```{r}
+quanteda_lsa = quanteda.textmodels::textmodel_lsa(quanteda_DFM,40)
+```
+
+```{r}
+LSAfun::neighbors("ruler",10,quanteda_lsa$features)
+```
+
+
+```{r}
+LSAfun::plot_neighbors("island",10,tvectors=quanteda_lsa$features)
+```
+
+#topicModel
+
+```{r}
+sel_idx <- slam::row_sums(quanteda_DFM) > 0
+quanteda_DFM <- quanteda_DFM[sel_idx, ]
+textdata <- textdata[sel_idx, ]
+```
+
+
+```{r}
+topicModel_lda <- topicmodels::LDA(quanteda_DFM, 40, method="Gibbs", control=list(iter=400)) #only 400 iterations to make it faster
+```
+
+
+```{r}
+# the code is from here: https://gist.github.com/trinker/477d7ae65ff6ca73cace
+topicmodels2LDAvis <- function(x, ...){
+    post <- topicmodels::posterior(x)
+    if (ncol(post[["topics"]]) < 3) stop("The model must contain > 2 topics")
+    mat <- x@wordassignments
+    LDAvis::createJSON(
+        phi = post[["terms"]], 
+        theta = post[["topics"]],
+        vocab = colnames(post[["terms"]]),
+        doc.length = slam::row_sums(mat, na.rm = TRUE),
+        term.frequency = slam::col_sums(mat, na.rm = TRUE)
+    )
+}
+```
+
+
+
+```{r}
+LDAvis::serVis(topicmodels2LDAvis(topicModel_lda))
+```
