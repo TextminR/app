@@ -1,0 +1,20 @@
+---
+title: "Trends"
+output: pdf_document
+date: "2023-03-15"
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
+df <- as.data.frame(textdata)
+
+df %>%
+  group_by(speech_doc_id, date) %>%
+  summarise(text = paste(text, collapse = ""))
+```
