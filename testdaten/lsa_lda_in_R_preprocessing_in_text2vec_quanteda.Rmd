@@ -2,7 +2,9 @@
 title: "topic-modelling"
 author: "Elisa Bankl"
 date: "2023-01-13"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -20,6 +22,7 @@ Read in the dataset
 ```{r}
 textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
 head(textdata)
+textdata[2,6]
 ```
 In this notebook, the packages text2vec are used to create a Document Feature Matrix / a sparse Document Term Matrix from the dataset.
 
