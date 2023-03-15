@@ -6,6 +6,8 @@ date: "2023-03-15"
 
 ```{r setup, include=FALSE}
 library(dplyr)
+library(stringr)
+library(ggplot2)
 
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -14,7 +16,19 @@ knitr::opts_chunk$set(echo = TRUE)
 textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
 df <- as.data.frame(textdata)
 
-df %>%
-  group_by(speech_doc_id, date) %>%
+word <- "the"
+
+data <- df %>%
+  group_by(speech_doc_id, date, president) %>%
   summarise(text = paste(text, collapse = ""))
+
+result <- data %>%
+  group_by(speech_doc_id, date, president) %>%
+  summarise(
+    count = str_count(text, word),
+    date = as.Date(date)
+  )
+
+ggplot(result, aes(x=date, y=count, color = president)) +
+  geom_jitter()
 ```
