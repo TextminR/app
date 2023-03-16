@@ -1,0 +1,58 @@
+---
+title: "Graph tests"
+author: "Daniel Lengsteiner"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Barcharts
+
+```{r barchart}
+library(stringr)
+library(dplyr)
+textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
+speech <- textdata %>% group_by(speech_doc_id,president,date,) %>% summarise(text = paste0(text, collapse = " ")) 
+
+words<-strsplit("God,America,country,liberty",",")[[1]]
+
+wordcount<- c()
+for(i in 1:length(words)){
+  wordcount[i] <- sum(str_count(speech$text, words[i]))
+}
+
+dataframe <- data.frame(word=words,count=wordcount)
+
+
+#https://www.datanovia.com/en/blog/ggplot-gradient-color/
+ggplot(data=dataframe, aes(x=word,y=count)) + geom_bar(stat="identity", aes(fill=count)) + scale_fill_gradientn(colours = c("darkblue","blue","blue","purple","magenta","red","red")) + ggtitle("Frequency of words used in presidential speeches from 1790 - 1903")
+
+
+#https://www.educba.com/bar-charts-in-r/
+barplot(wordcount,names.arg=words,xlab="Word",ylab="Frequency",col="Red",main="Frequency of words used in presidential speeches from 1790 - 1903",border="black")
+
+
+#https://stackoverflow.com/questions/18101047/list-of-word-frequencies-using-r
+library(tm)
+
+#https://uc-r.github.io/word_relationships
+```
+
+## N-Grams
+
+```{r}
+#https://uc-r.github.io/word_relationships
+library(tidyverse)      # data manipulation & plotting
+library(stringr)        # text cleaning and regular expressions
+library(tidytext)       # provides additional text mining functions
+
+textdata$text %>% count(bigram, sort=TRUE)
+```
+
+
+
+
+
