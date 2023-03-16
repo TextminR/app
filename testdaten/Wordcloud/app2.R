@@ -3,6 +3,8 @@ library(shiny)
 library(wordcloud2)
 library(tm)
 library(SnowballC)
+library(tibble)
+
 
 # Lade Textdaten
 textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
@@ -10,10 +12,10 @@ corpus <- Corpus(VectorSource(textdata))
 
 # Verarbeite Textdaten
 processedCorpus <- tm_map(corpus, content_transformer(tolower))
-processedCorpus <- tm_map(processedCorpus, removeWords, stopwords())
+processedCorpus <- tm_map(processedCorpus, removeWords, stopwords("en"))
 processedCorpus <- tm_map(processedCorpus, removePunctuation, preserve_intra_word_dashes = TRUE)
 processedCorpus <- tm_map(processedCorpus, removeNumbers)
-processedCorpus <- tm_map(processedCorpus, stemDocument, language = "en")
+#processedCorpus <- tm_map(processedCorpus, stemDocument, language = "en")
 processedCorpus <- tm_map(processedCorpus, stripWhitespace)
 
 # Erstelle Shiny-App
