@@ -8,6 +8,8 @@ date: "2023-03-15"
 library(dplyr)
 library(stringr)
 library(ggplot2)
+library(plotly)
+library(reshape2)
 
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -16,19 +18,35 @@ knitr::opts_chunk$set(echo = TRUE)
 textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
 df <- as.data.frame(textdata)
 
-word <- "the"
-
 data <- df %>%
-  group_by(speech_doc_id, date, president) %>%
-  summarise(text = paste(text, collapse = ""))
+    group_by(speech_doc_id, date, president) %>%
+    summarise(text = paste(text, collapse = ""))
 
-result <- data %>%
-  group_by(speech_doc_id, date, president) %>%
-  summarise(
-    count = str_count(text, word),
-    date = as.Date(date)
-  )
+plooten <- function(word) {
+  result <- data
+    result <- result %>%
+      group_by(speech_doc_id, date, president) %>%
+      summarise(date = as.Date(date), "count" = str_count(text, word))
+  return(result)
+}
 
-ggplot(result, aes(x=date, y=count, color = president)) +
-  geom_jitter()
+merge_fun <- function(x, y) {
+  merge(x, y, by = c("speech_doc_id", "date", "president"), all = TRUE)
+}
+
+df1 <- plooten("war")
+df2 <- plooten("peace")
+df3 <- plooten("one")
+
+merged <- Reduce(merge_fun, list(df1, df2, df3))
+merged                 
+colnames(merged)[4:ncol(merged)] <- paste0("count", 1:(ncol(merged)-3))
+
+merged2 <- melt(merged, id.vars = c("speech_doc_id", "date", "president"))
+merged2
+
+p <- ggplot() +
+  geom_smooth(merged2, mapping = aes(date, value, color = variable)) 
+
+ggplotly(p)
 ```
