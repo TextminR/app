@@ -1,17 +1,25 @@
 library(shiny)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(plotly)
+library(reshape2)
+
+
 ui <- fluidPage(
-  sidebarLayout(
-    textInput("words", "Wörter eingeben:")
-  ),
-  mainPanel(
-    plotOutput("plot")
-  )
+    textInput("words", "Wörter eingeben:"), 
+    plotlyOutput("plot")
 )
+
+
 server <- function(input, output, session) {
   
   
   textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
   df <- as.data.frame(textdata)
+  
+  
+  
   
   data <- df %>%
     group_by(speech_doc_id, date, president) %>%
@@ -29,15 +37,31 @@ server <- function(input, output, session) {
     merge(x, y, by = c("speech_doc_id", "date", "president"), all = TRUE)
   }
   
-  words <- input$words
-  dfs <- list()
   
-  for (word in words){
-    append(dfs, plooten(word))
-  }
   
-  output$plot <- renderPlot(
-    
+  
+  # words <- input$words
+  # dfs <- list()
+  # 
+  # for (word in words){
+  #   append(dfs, plooten(word))
+  # }
+  
+  df1 <- plooten("war")
+  df2 <- plooten("peace")
+  df3 <- plooten("one")
+  
+  merged <- Reduce(merge_fun, list(df1, df2, df3))
+  
+  merged2 <- melt(merged, id.vars = c("speech_doc_id", "date", "president"))
+  
+  p <- ggplot() +
+    geom_smooth(merged2, mapping = aes(date, value, color = variable))
+  
+  p <- ggplotly(p)
+  
+  output$plot <- renderPlotly(
+    p
   )
 }
 shinyApp(ui, server)
