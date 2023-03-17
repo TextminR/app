@@ -15,7 +15,7 @@ processedCorpus <- tm_map(corpus, content_transformer(tolower))
 processedCorpus <- tm_map(processedCorpus, removeWords, stopwords("en"))
 processedCorpus <- tm_map(processedCorpus, removePunctuation, preserve_intra_word_dashes = TRUE)
 processedCorpus <- tm_map(processedCorpus, removeNumbers)
-#processedCorpus <- tm_map(processedCorpus, stemDocument, language = "en")
+processedCorpus <- tm_map(processedCorpus, stemDocument, language = "en")
 processedCorpus <- tm_map(processedCorpus, stripWhitespace)
 
 # Erstelle Shiny-App
@@ -23,10 +23,16 @@ ui <- fluidPage(
   # Titel
   titlePanel("Wordcloud mit Textdaten"),
   
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("num_words", "Maximale Anzahl an Wörtern:",
+                  min = 1, max = 500, value = 100, step = 10)
+    )
+  ),
+  
+  
   # Wordcloud-Bereich
   mainPanel(
-    sliderInput("num_words", "Maximale Anzahl an Wörtern:",
-                min = 1, max = 500, value = 100, step = 10),
     wordcloud2Output("wordcloud", width = "100%", height = "600px")
   )
 )

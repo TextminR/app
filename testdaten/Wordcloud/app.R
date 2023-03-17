@@ -23,11 +23,15 @@ ui <- fluidPage(
   # Titel
   titlePanel("Wordcloud mit Textdaten"),
   
-  # Wordcloud-Bereich
-  mainPanel(
-    sliderInput("num_words", "Maximale Anzahl an Wörtern:",
-                min = 1, max = 500, value = 100, step = 10),
-    wordcloud2Output("wordcloud", width = "100%", height = "600px")
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("num_words", "Maximale Anzahl an Wörtern:",
+                  min = 1, max = 500, value = 100, step = 10)
+    ),
+    # Wordcloud-Bereich
+    mainPanel(
+      wordcloud2Output("wordcloud", width = "100%", height = "600px")
+    )
   )
 )
 
