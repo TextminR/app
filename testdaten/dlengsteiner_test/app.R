@@ -10,8 +10,17 @@ speech <- textdata %>% group_by(speech_doc_id,president,date,) %>% summarise(tex
 
 
 ui <- fluidPage(
-  textInput("words_input","Type in words you want to see displayed, seperated by a comma (,). WARNING: words are case-sensitive!"),
-  plotOutput("barchart")
+  titlePanel(
+    "Barcharts"
+  ),
+  sidebarLayout(
+    sidebarPanel(
+      textInput("words_input","Type in words you want to see displayed, seperated by a comma (,). WARNING: words are case-sensitive!")
+    ),
+    mainPanel(
+      plotOutput("barchart", height = "500px")
+    )
+  )
 )
 
 
@@ -43,8 +52,8 @@ server <- function(input, output, session) {
     ggplot(data=dataframe, aes(x=word,y=count)) + 
       geom_bar(stat="identity", aes(fill=count)) +
       #scale_fill_gradientn(colours = c("darkblue","blue","blue","purple","magenta","red","red")) + 
-      ggtitle("Frequency of words used in presidential speeches from 1790 - 1903") +
-      theme(text=element_text(size=25))
+      ggtitle("Frequency of words used \n in presidential speeches from 1790 - 1903") +
+      theme(text=element_text(size=25),plot.title=element_text(hjust=0.5))
     #barplot(wordcount,names.arg=words,xlab="Word",ylab="Frequency",col="Red",main="Frequency of words used in presidential speeches from 1790 - 1903",border="black")
   })
 }
