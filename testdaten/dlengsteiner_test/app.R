@@ -35,25 +35,35 @@ server <- function(input, output, session) {
     words <- strsplit(input$words_input,",")[[1]]
     
     
-    #creating vector for the word count of each word
-    wordcount<- c()
-    for(i in 1:length(words)){
-      #Removing all non-alpha-numeric characters and numbers from the extracted words,
-      if(!(str_replace_all(words[i], "[^[:alnum:]]", ""))==""){
-        words[i] <- str_replace_all(words[i], "[^[:alnum:]]", "")
-        #saving the wordcount of the current word to the new vector
-        wordcount[i] <- sum(str_count(speech$text, words[i]))
+    tryCatch({
+      #creating vector for the word count of each word
+      wordcount<- c()
+      for(i in 1:length(words)){
+        #Removing all non-alpha-numeric characters and numbers from the extracted words,
+        if(!(str_replace_all(words[i], "[^[:alnum:]]", ""))==""){
+          words[i] <- str_replace_all(words[i], "[^[:alnum:]]", "")
+          #saving the wordcount of the current word to the new vector
+          wordcount[i] <- sum(str_count(speech$text, words[i]))
+        }
       }
-    }
-    
-    #dataframe which combines words and wordcount
-    dataframe <- data.frame(word=words,count=wordcount)
-    #plotting the dataframe
-    ggplot(data=dataframe, aes(x=word,y=count)) + 
-      geom_bar(stat="identity", aes(fill=count)) +
-      #scale_fill_gradientn(colours = c("darkblue","blue","blue","purple","magenta","red","red")) + 
-      ggtitle("Frequency of words used \n in presidential speeches from 1790 - 1903") +
-      theme(text=element_text(size=25),plot.title=element_text(hjust=0.5))
+      #dataframe which combines words and wordcount
+      dataframe <- data.frame(word=words,count=wordcount)
+      #plotting the dataframe
+      ggplot(data=dataframe, aes(x=word,y=count)) + 
+        geom_bar(stat="identity", aes(fill=count)) +
+        #scale_fill_gradientn(colours = c("darkblue","blue","blue","purple","magenta","red","red")) + 
+        ggtitle("Frequency of words used \n in presidential speeches from 1790 - 1903") +
+        theme(text=element_text(size=25),plot.title=element_text(hjust=0.5))
+      
+    }, error = function(e)
+      ggplot() +                      # Draw ggplot2 plot with text only
+      annotate("text",
+               x = 1,
+               y = 1,
+               size = 8,
+               label = "Please enter a word") + 
+      theme_void()
+    )
     #barplot(wordcount,names.arg=words,xlab="Word",ylab="Frequency",col="Red",main="Frequency of words used in presidential speeches from 1790 - 1903",border="black")
   })
 }
