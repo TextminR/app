@@ -19,7 +19,7 @@ speech <- textdata %>% group_by(speech_doc_id,president,date,) %>% summarise(tex
 
 words<-strsplit("God,America,country,liberty",",")[[1]]
 
-wordcount<- c()
+wordcount <- c()
 for(i in 1:length(words)){
   wordcount[i] <- sum(str_count(speech$text, words[i]))
 }
