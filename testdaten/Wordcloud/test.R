@@ -5,7 +5,7 @@ library(tm)
 library(SnowballC)
 library(dplyr)
 library(tibble)
-library(lubridate) 
+
 
 # Lade Textdaten
 textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
@@ -14,7 +14,16 @@ textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.r
 v <- stop_words
 v <- v %>% filter(word != "states")
 
+# Verarbeite Textdaten mit tidytext
+# %>% ist eine Pipe; statt jedes mal "words <-" zu verwenden, kann man es so machen und zwischenspeichern
+words <- textdata %>%
+  # Die Wörter in der Spalte text werden extrahiert und in eine eigene Spalte word gespeichert
+  unnest_tokens(word, text, to_lower = TRUE) %>%
+  # Entferne stopwords
+  anti_join(v)
 
+
+# Erstelle Shiny-App
 ui <- fluidPage(
   # Titel
   titlePanel("Amerikanische Reden von Präsidenten"),
@@ -36,20 +45,11 @@ ui <- fluidPage(
 server <- function(input, output) {
   # Erzeuge Wordcloud
   output$wordcloud <- renderWordcloud2({
-    # Filtere die Textdaten nach dem ausgewählten Jahr
-    # %>% ist eine Pipe; statt jedes mal "words <-" zu verwenden, kann man es so machen und zwischenspeichern
-    filtered_textdata <- textdata %>%
-      mutate(year = year(date)) %>% # Extra Spalte year erstellen, um das Jahr zu vergleichen
-      filter(year <= input$years) # Alle Zeilen entfernen, die <= user input sind
-    
-    # Verarbeite die gefilterten Textdaten mit tidytext
-    words <- filtered_textdata %>%
-      unnest_tokens(word, text, to_lower = TRUE) %>% # # Die Wörter in der Spalte text werden extrahiert und in eine eigene Spalte word gespeichert 
-      anti_join(v) # stopwords entfernen
-    
     # Extrahiere die am häufigsten vorkommenden Wörter und ihre Häufigkeit
     top_words <- words %>%
+      # Gruppiert alle wörter in "word" und zählt wie oft sie vorkommen + sortiert sie
       count(word, sort = TRUE) %>%
+      # User input zur Größen bestimmung  
       head(input$num_words)
     
     # Erzeuge Wordcloud
