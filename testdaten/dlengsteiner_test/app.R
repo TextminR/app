@@ -10,9 +10,16 @@ speech <- textdata %>% group_by(speech_doc_id,president,date,) %>% summarise(tex
 
 
 ui <- fluidPage(
+  #changing font size of all text
+  tags$head(
+    tags$style("label{font-size: 15pt;}"),
+    tags$style("#words_input {font-size:15pt;height:20pt;color:green}"),
+  ),
+  #title of shiny page
   titlePanel(
     "Barcharts"
   ),
+  #main panel for I/O
   sidebarLayout(
     sidebarPanel(
       textInput("words_input","Type in words you want to see displayed, seperated by a comma (,). WARNING: words are case-sensitive!")
@@ -56,11 +63,12 @@ server <- function(input, output, session) {
         theme(text=element_text(size=25),plot.title=element_text(hjust=0.5))
       
     }, error = function(e)
-      ggplot() +                      # Draw ggplot2 plot with text only
+      # Draw ggplot2 plot with text only
+      ggplot() +                      
       annotate("text",
                x = 1,
                y = 1,
-               size = 8,
+               size = 12,
                label = "Please enter a word") + 
       theme_void()
     )
