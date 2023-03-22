@@ -70,14 +70,15 @@ server <- function(input, output, session) {
             dfList[[i]] = plooten(word)
             i=i+1
           }
-          if(i > 3){
-            break
-          }
+          # if(i > 3){
+          #   break
+          # }
         }
         
-        merged <- Reduce(merge_fun, dfList)
         
         tryCatch({
+          merged <- Reduce(merge_fun, dfList)
+          colnames(merged)[4:ncol(merged)] <- words
           merged2 <- melt(merged, id.vars = c("speech_doc_id", "date", "president"))
           p <- ggplot() +
             geom_smooth(merged2, mapping = aes(date, value, color = variable), se = FALSE)
