@@ -10,18 +10,22 @@ library(tibble)
 # Lade Textdaten
 textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
 
+# Entferne "states"
+v <- stop_words
+v <- v %>% filter(word != "states")
+
 # Verarbeite Textdaten mit tidytext
 # %>% ist eine Pipe; statt jedes mal "words <-" zu verwenden, kann man es so machen und zwischenspeichern
 words <- textdata %>%
-  # Wie Wörter in der Spalte text werden extrahiert und in eine eigene Spalte word gespeichert
-  unnest_tokens(word, text) %>%
+  # Die Wörter in der Spalte text werden extrahiert und in eine eigene Spalte word gespeichert
+  unnest_tokens(word, text, to_lower = TRUE) %>%
   # Entferne stopwords
-  anti_join(stop_words)
+  anti_join(v)
 
 # Erstelle Shiny-App
 ui <- fluidPage(
   # Titel
-  titlePanel("Wordcloud mit Textdaten"),
+  titlePanel("Amerikanische Reden von Präsidenten"),
   
   sidebarLayout(
     sidebarPanel(
