@@ -36,9 +36,8 @@ merge_fun <- function(x, y) {
 
 df1 <- plooten("war")
 df2 <- plooten("peace")
-df3 <- plooten("one")
 
-merged <- Reduce(merge_fun, list(df1, df2, df3))
+merged <- Reduce(merge_fun, list(df1, df2))
 merged                 
 colnames(merged)[4:ncol(merged)] <- paste0("count", 1:(ncol(merged)-3))
 

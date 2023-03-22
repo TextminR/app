@@ -5,6 +5,31 @@ library(ggplot2)
 library(plotly)
 library(reshape2)
 
+textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
+df <- as.data.frame(textdata)
+
+
+
+
+data <- df %>%
+  group_by(speech_doc_id, date, president) %>%
+  summarise(text = paste(text, collapse = ""))
+
+plooten <- function(word) {
+  result <- data
+  result <- result %>%
+    group_by(speech_doc_id, date, president) %>%
+    summarise(date = as.Date(date), "count" = str_count(text, word))
+  return(result)
+}
+
+merge_fun <- function(x, y) {
+  merge(x, y, by = c("speech_doc_id", "date", "president"), all = TRUE)
+}
+
+
+
+
 
 ui <- fluidPage(
     textInput("words", "Wörter eingeben:"), 
@@ -12,56 +37,36 @@ ui <- fluidPage(
 )
 
 
+
+
 server <- function(input, output, session) {
-  
-  
-  textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
-  df <- as.data.frame(textdata)
-  
-  
-  
-  
-  data <- df %>%
-    group_by(speech_doc_id, date, president) %>%
-    summarise(text = paste(text, collapse = ""))
-  
-  plooten <- function(word) {
-    result <- data
-    result <- result %>%
-      group_by(speech_doc_id, date, president) %>%
-      summarise(date = as.Date(date), "count" = str_count(text, word))
-    return(result)
-  }
-  
-  merge_fun <- function(x, y) {
-    merge(x, y, by = c("speech_doc_id", "date", "president"), all = TRUE)
-  }
-  
-  
-  
-  
-  # words <- input$words
-  # dfs <- list()
-  # 
-  # for (word in words){
-  #   append(dfs, plooten(word))
-  # }
-  
-  df1 <- plooten("war")
-  df2 <- plooten("peace")
-  df3 <- plooten("one")
-  
-  merged <- Reduce(merge_fun, list(df1, df2, df3))
-  
-  merged2 <- melt(merged, id.vars = c("speech_doc_id", "date", "president"))
-  
-  p <- ggplot() +
-    geom_smooth(merged2, mapping = aes(date, value, color = variable))
-  
-  p <- ggplotly(p)
-  
-  output$plot <- renderPlotly(
-    p
-  )
+  observeEvent(input$words,{
+    output$plot <- renderPlotly({
+      words <- strsplit(input$words, ",")[[1]]
+      
+      dfList <- list()
+      i=1
+      for (word in words){
+        if(!(str_replace_all(word, "[^[:alnum:]]", ""))==""){
+          word <- str_replace_all(word, "[^[:alnum:]]", "")
+          dfList[[i]] = plooten(word)
+          i=i+1
+        }
+        if(i > 3){
+          break
+        }
+      }
+      
+      merged <- Reduce(merge_fun, dfList)
+      
+      merged2 <- melt(merged, id.vars = c("speech_doc_id", "date", "president"))
+      
+      p <- ggplot() +
+        geom_smooth(merged2, mapping = aes(date, value, color = variable), se = FALSE)
+      
+      p <- ggplotly(p)
+      p
+    })
+  })
 }
 shinyApp(ui, server)
