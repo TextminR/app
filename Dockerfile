@@ -15,3 +15,5 @@ RUN Rscript -e 'remotes::install_version("rsconnect",upgrade="never", version = 
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.5")'
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.27")'
 RUN Rscript -e 'remotes::install_version("rcmdcheck",upgrade="never", version = "1.4.0")'
+RUN Rscript -e 'install.packages("plotly")'
+RUN Rscript -e 'install.packages("stringr")'
