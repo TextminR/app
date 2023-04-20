@@ -4,13 +4,66 @@
 #'     DO NOT REMOVE.
 #' @import shiny
 #' @noRd
+
+library(plotly)
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
-    fluidPage(
-      h1("textminRApp")
+    
+    navbarPage("Prototyp",
+      shinyjs::useShinyjs(),
+               
+      tabPanel(
+        "Basisdiag.",
+        
+        sidebarLayout(
+          sidebarPanel(
+            h4("Basisdiagramme"),
+            
+            textInput("glwords", "Anzuzeigende Wörter (mit Beistrich trennen):"),
+            sliderInput("glyears",
+                        "Zeitspanne:",
+                        min = 1790, max = 1903, value = c(1800, 1850), sep = "", step = 1
+            ),
+            selectInput("glpres",
+                        "Wählen Sie einen Präsidenten:",
+                        choices = c("Alle", paste(unique(textdata$president))),
+                        selected = "Alle"
+            ),
+            checkboxInput("checktg", "Trendgraph", FALSE),
+            checkboxInput("checkbc", "Bar chart", FALSE),
+            
+            hr(),
+            
+            h4("Weitere Diagramme"),
+            checkboxInput("checkst", "Sentimentanalyse", FALSE),
+          ),
+          mainPanel(plotlyOutput(outputId = "plot", height = "90vh"))
+        )
+      ),
+      tabPanel(
+        "Wordcloud",
+        
+        sidebarLayout(
+          sidebarPanel(
+            h4("Wordcloud"),
+            
+            sliderInput("wcnum",
+                        "Maximale Anzahl an Wörtern:",
+                        min = 1, max = 500, value = 100, step = 10
+            ),
+            sliderInput("wcyears",
+                        "Zeitspanne:",
+                        min = 1790, max = 1903, value = c(1800, 1850), sep = "", step = 1
+            )
+          ),
+          mainPanel(
+            wordcloud2Output("wcplot", width = "100%", height = "600px")
+          )
+        )
+      )
     )
   )
 }
@@ -28,7 +81,7 @@ golem_add_external_resources <- function() {
     "www",
     app_sys("app/www")
   )
-
+  
   tags$head(
     favicon(),
     bundle_resources(
