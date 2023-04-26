@@ -54,8 +54,9 @@ renderTrendgraph <- function(words, pres, years_start, years_end) {
     melt(merged, id.vars = c("speech_doc_id", "date", "president"))
   
   return (ggplotly(ggplot() +
-    geom_smooth(merged2, mapping = aes(date, value, color = variable), se = FALSE) +
-    labs(title = "Wortfrequenzen (über alle Jahre)", x = "Zeit", y = "Frequenz")))
+    geom_smooth(merged2, mapping = aes(date, value, color = variable, size=2), se = FALSE) +
+    labs(title = "Wortfrequenzen (über alle Jahre)", x = "Zeit", y = "Frequenz") +
+    theme(text = element_text(size=18)))) 
 }
 
 renderBarchart <- function(words, pres, years_start, years_end) {
@@ -80,7 +81,8 @@ renderBarchart <- function(words, pres, years_start, years_end) {
   
   return(ggplotly(ggplot(data = dataframe, aes(x = word, y = count)) +
     geom_bar(stat = "identity", aes(fill = count)) +
-    labs(title = "Wortfrequenzen (insgesamt)", x = "Wörter", y = "Frequenz")))
+    labs(title = "Wortfrequenzen (insgesamt)", x = "Wörter", y = "Frequenz") + 
+    theme(text=element_text(size=18))))
 }
 
 renderSentiment <- function(pres, years_start, years_end) {

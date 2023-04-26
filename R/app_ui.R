@@ -6,13 +6,14 @@
 #' @noRd
 
 library(plotly)
+library(shinythemes)
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
     
-    navbarPage("Prototyp",
+    navbarPage(theme= shinytheme("cerulean") ,"Prototyp",
       shinyjs::useShinyjs(),
                
       tabPanel(
