@@ -8,9 +8,10 @@
 library(plotly)
 library(shinythemes)
 app_ui <- function(request) {
+  golem_add_external_resources()
+  textdata <- fetch_data()
   tagList(
     # Leave this function for adding external resources
-    golem_add_external_resources(),
     # Your application UI logic
     
     navbarPage(theme= shinytheme("cerulean") ,"Prototyp",
@@ -68,6 +69,8 @@ app_ui <- function(request) {
     )
   )
 }
+
+
 
 #' Add external Resources to the Application
 #'
