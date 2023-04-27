@@ -3,6 +3,7 @@ library(reshape2)
 library(stringr)
 library(tidytext)
 library(wordcloud2)
+library(dplyr)
 
 plooten <- function(data, word) {
   result <- data
@@ -17,7 +18,7 @@ merge_fun <- function(x, y) {
 }
 
 filter_year <- function(data, year_start, year_end) {
-  return(data %>% filter(date >= year_start & date <= year_end))
+  return(dplyr::filter(data, date >= year_start & date <= year_end))
 }
 
 filter_pres <- function(data, pres){

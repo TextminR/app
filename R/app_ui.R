@@ -9,7 +9,6 @@ library(plotly)
 library(shinythemes)
 app_ui <- function(request) {
   golem_add_external_resources()
-  textdata <- fetch_data()
   tagList(
     # Leave this function for adding external resources
     # Your application UI logic
