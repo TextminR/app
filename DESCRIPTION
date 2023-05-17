@@ -28,7 +28,8 @@ Imports:
     wordcloud2,
     shinyjs,
     shinythemes,
-    reshape2
+    reshape2,
+    textdata
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
