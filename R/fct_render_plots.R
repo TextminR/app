@@ -191,7 +191,7 @@ renderSentiment <- function(data, pres, years_start, years_end) {
 #' @export
 #'
 #' @examples
-renderWordcloud <- function(data, years_start, years_end, lim) {
+renderWordcloud <- function(textdata, years_start, years_end, lim) {
   v <- tidytext::stop_words
   v <- v %>% filter(word != "states")
   
