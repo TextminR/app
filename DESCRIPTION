@@ -27,7 +27,8 @@ Imports:
     tm,
     wordcloud2,
     shinyjs,
-    shinythemes
+    shinythemes,
+    reshape2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
