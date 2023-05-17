@@ -16,6 +16,11 @@ prepare_data <- function(textdata) {
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
+  theme_set(theme(
+    legend.position = "bottom",
+    text = element_text(size = 14)
+  ))
+  
   textdata <- fetch_data()
   data <- prepare_data(textdata)
   
@@ -43,7 +48,7 @@ app_server <- function(input, output, session) {
     renderSentiment(input$glpres, input$glyears[1], input$glyears[2])
   })
   
-  output$plot <- renderPlotly({
+  output$plot <- renderPlot({
     ptlist <- list(plottg(), plotbc(), plotst())
     to_delete <- !sapply(ptlist, is.null)
     ptlist <- ptlist[to_delete]
@@ -53,13 +58,12 @@ app_server <- function(input, output, session) {
       return(NULL)
     }
     
-    # gridExtra::grid.arrange(
-    #   grobs = ptlist,
-    #   ncol = ifelse(len >= 2, 2, len),
-    #   nrow = ifelse(len >= 2, len / 2 + len %% 2, 1),
-    #   padding = 2
-    # )
-    plotly::subplot(ptlist, nrows = round(ifelse(len >= 2, len / 2 + len %% 2, 1)))
+    gridExtra::grid.arrange(
+      grobs = ptlist,
+      ncol = ifelse(len >= 2, 2, len),
+      nrow = ifelse(len >= 2, len / 2 + len %% 2, 1),
+      padding = 2
+    )
   })
   
   output$wcplot <- renderWordcloud2({
