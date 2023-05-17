@@ -105,7 +105,7 @@ renderTrendgraph <- function(data, words, pres, years_start, years_end) {
     melt(merged, id.vars = c("speech_doc_id", "date", "president"))
   
   return (ggplot() +
-    geom_smooth(merged2, mapping = aes(date, value, color = variable, size=2), se = FALSE) +
+    geom_smooth(merged2, mapping = aes(date, value, color = variable), se = FALSE) +
     labs(title = "Wortfrequenzen (über alle Jahre)", x = "Zeit", y = "Frequenz"))
 }
 
@@ -155,8 +155,8 @@ renderBarchart <- function(data, words, pres, years_start, years_end) {
 #' @export
 #'
 #' @examples
-renderSentiment <- function(textdata, pres, years_start, years_end) {
-  selected_president_data <- textdata
+renderSentiment <- function(data, pres, years_start, years_end) {
+  selected_president_data <- data
   selected_president_data <- filter_pres(selected_president_data, pres)
   selected_president_data <- filter_year(selected_president_data, years_start, years_end)
   
@@ -191,11 +191,11 @@ renderSentiment <- function(textdata, pres, years_start, years_end) {
 #' @export
 #'
 #' @examples
-renderWordcloud <- function(textdata, years_start, years_end, lim) {
+renderWordcloud <- function(data, years_start, years_end, lim) {
   v <- tidytext::stop_words
   v <- v %>% filter(word != "states")
   
-  filtered_textdata <- filter_year(textdata, years_start, years_end)
+  filtered_textdata <- filter_year(data, years_start, years_end)
   
   words <- filtered_textdata %>%
     unnest_tokens(word, text, to_lower = TRUE) %>%

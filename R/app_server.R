@@ -45,7 +45,7 @@ app_server <- function(input, output, session) {
       return(NULL)
     }
     
-    renderSentiment(data, input$glpres, input$glyears[1], input$glyears[2])
+    renderSentiment(textdata, input$glpres, input$glyears[1], input$glyears[2])
   })
   
   output$plot <- renderPlot({
@@ -67,6 +67,6 @@ app_server <- function(input, output, session) {
   })
   
   output$wcplot <- renderWordcloud2({
-    renderWordcloud(data, input$glyears[1], input$glyears[2], input$wcnum)
+    renderWordcloud(textdata, input$glyears[1], input$glyears[2], input$wcnum)
   })
 }
