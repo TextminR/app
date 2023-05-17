@@ -1,11 +1,9 @@
 library(shiny)
 library(wordcloud2)
 library(tidytext)
-library(tm)
 library(SnowballC)
 library(dplyr)
 library(tibble)
-library(lubridate) 
 
 # Lade Textdaten
 textdata <- base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb"))
@@ -44,7 +42,7 @@ server <- function(input, output) {
     
     # Verarbeite die gefilterten Textdaten mit tidytext
     words <- filtered_textdata %>%
-      unnest_tokens(word, text, to_lower = TRUE) %>% # # Die Wörter in der Spalte text werden extrahiert und in eine eigene Spalte word gespeichert 
+      unnest_tokens(word, text, to_lower = TRUE) %>% # Die Wörter in der Spalte text werden extrahiert und in eine eigene Spalte word gespeichert 
       anti_join(v) # stopwords entfernen
     
     # Extrahiere die am häufigsten vorkommenden Wörter und ihre Häufigkeit
