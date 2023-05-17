@@ -119,7 +119,7 @@ renderTrendgraph <- function(words, pres, years_start, years_end) {
 #' @param years_end last year of the textdata that influences the plot
 #'
 #' @return bar-chart as ggplot
-renderBarchart <- function(words, pres, years_start, years_end) {
+renderBarchart <- function(data, words, pres, years_start, years_end) {
   words <- strsplit(words, ",")[[1]]
   if (!length(words)) {
     return(NULL)
@@ -155,7 +155,7 @@ renderBarchart <- function(words, pres, years_start, years_end) {
 #' @export
 #'
 #' @examples
-renderSentiment <- function(pres, years_start, years_end) {
+renderSentiment <- function(data, pres, years_start, years_end) {
   selected_president_data <- textdata
   selected_president_data <- filter_pres(selected_president_data, pres)
   selected_president_data <- filter_year(selected_president_data, years_start, years_end)
@@ -191,7 +191,7 @@ renderSentiment <- function(pres, years_start, years_end) {
 #' @export
 #'
 #' @examples
-renderWordcloud <- function(years_start, years_end, lim) {
+renderWordcloud <- function(data, years_start, years_end, lim) {
   v <- tidytext::stop_words
   v <- v %>% filter(word != "states")
   
