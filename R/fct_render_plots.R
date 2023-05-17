@@ -155,7 +155,7 @@ renderBarchart <- function(data, words, pres, years_start, years_end) {
 #' @export
 #'
 #' @examples
-renderSentiment <- function(data, pres, years_start, years_end) {
+renderSentiment <- function(textdata, pres, years_start, years_end) {
   selected_president_data <- textdata
   selected_president_data <- filter_pres(selected_president_data, pres)
   selected_president_data <- filter_year(selected_president_data, years_start, years_end)
