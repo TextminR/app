@@ -29,7 +29,7 @@ app_server <- function(input, output, session) {
       return(NULL)
     }
     
-    renderTrendgraph(input$glwords, input$glpres, input$glyears[1], input$glyears[2])
+    renderTrendgraph(data, input$glwords, input$glpres, input$glyears[1], input$glyears[2])
   })
   
   plotbc <- reactive({
@@ -37,7 +37,7 @@ app_server <- function(input, output, session) {
       return(NULL)
     }
     
-    renderBarchart(input$glwords, input$glpres, input$glyears[1], input$glyears[2])
+    renderBarchart(data, input$glwords, input$glpres, input$glyears[1], input$glyears[2])
   })
   
   plotst <- reactive({
@@ -45,7 +45,7 @@ app_server <- function(input, output, session) {
       return(NULL)
     }
     
-    renderSentiment(input$glpres, input$glyears[1], input$glyears[2])
+    renderSentiment(data, input$glpres, input$glyears[1], input$glyears[2])
   })
   
   output$plot <- renderPlot({
@@ -67,6 +67,6 @@ app_server <- function(input, output, session) {
   })
   
   output$wcplot <- renderWordcloud2({
-    renderWordcloud(input$glyears[1], input$glyears[2], input$wcnum)
+    renderWordcloud(data, input$glyears[1], input$glyears[2], input$wcnum)
   })
 }

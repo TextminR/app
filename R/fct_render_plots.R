@@ -79,7 +79,7 @@ filter_pres <- function(data, pres){
 #' @export
 #'
 #' @examples
-renderTrendgraph <- function(words, pres, years_start, years_end) {
+renderTrendgraph <- function(data, words, pres, years_start, years_end) {
   words <- strsplit(words, ",")[[1]]
   if (!length(words)) {
     return(NULL)
