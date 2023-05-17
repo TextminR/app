@@ -5,6 +5,15 @@ library(tidytext)
 library(wordcloud2)
 library(dplyr)
 
+#' Title
+#'
+#' @param data 
+#' @param word 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 plooten <- function(data, word) {
   result <- data
   result <- result %>%
@@ -13,14 +22,43 @@ plooten <- function(data, word) {
   return(result)
 }
 
+
+#' Title
+#'
+#' @param x 
+#' @param y 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 merge_fun <- function(x, y) {
   merge(x, y, by = c("speech_doc_id", "date", "president"), all = TRUE)
 }
 
+#' Title
+#'
+#' @param data 
+#' @param year_start 
+#' @param year_end 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 filter_year <- function(data, year_start, year_end) {
   return(filter(data, date >= year_start & date <= year_end))
 }
 
+#' Title
+#'
+#' @param data 
+#' @param pres 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 filter_pres <- function(data, pres){
   if (pres == "Alle") {
     return(data)
@@ -29,6 +67,18 @@ filter_pres <- function(data, pres){
   return (data %>% filter(president == pres))
 }
 
+
+#' Title
+#'
+#' @param words 
+#' @param pres 
+#' @param years_start 
+#' @param years_end 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 renderTrendgraph <- function(words, pres, years_start, years_end) {
   words <- strsplit(words, ",")[[1]]
   if (!length(words)) {
@@ -59,6 +109,16 @@ renderTrendgraph <- function(words, pres, years_start, years_end) {
     labs(title = "Wortfrequenzen (über alle Jahre)", x = "Zeit", y = "Frequenz"))
 }
 
+
+#' Takes a set of strings, looks up their occurrence 
+#' and returns a ggplot visualizing the words with their occurrence as a bar-chart.
+#'
+#' @param words a string of words seperated by commas (,)
+#' @param pres name of an amercian president
+#' @param years_start first year of the textdata that influences the plot
+#' @param years_end last year of the textdata that influences the plot
+#'
+#' @return bar-chart as ggplot
 renderBarchart <- function(words, pres, years_start, years_end) {
   words <- strsplit(words, ",")[[1]]
   if (!length(words)) {
@@ -84,6 +144,17 @@ renderBarchart <- function(words, pres, years_start, years_end) {
     labs(title = "Wortfrequenzen (insgesamt)", x = "Wörter", y = "Frequenz"))
 }
 
+
+#' Title
+#'
+#' @param pres 
+#' @param years_start 
+#' @param years_end 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 renderSentiment <- function(pres, years_start, years_end) {
   selected_president_data <- textdata
   selected_president_data <- filter_pres(selected_president_data, pres)
@@ -110,6 +181,16 @@ renderSentiment <- function(pres, years_start, years_end) {
     ))
 }
 
+#' Title
+#'
+#' @param years_start 
+#' @param years_end 
+#' @param lim 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 renderWordcloud <- function(years_start, years_end, lim) {
   v <- tidytext::stop_words
   v <- v %>% filter(word != "states")
