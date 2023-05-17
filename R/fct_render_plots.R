@@ -18,7 +18,7 @@ merge_fun <- function(x, y) {
 }
 
 filter_year <- function(data, year_start, year_end) {
-  return(dplyr::filter(data, date >= year_start & date <= year_end))
+  return(filter(data, date >= year_start & date <= year_end))
 }
 
 filter_pres <- function(data, pres){
@@ -54,10 +54,9 @@ renderTrendgraph <- function(words, pres, years_start, years_end) {
   merged2 <-
     melt(merged, id.vars = c("speech_doc_id", "date", "president"))
   
-  return (ggplotly(ggplot() +
+  return (ggplot() +
     geom_smooth(merged2, mapping = aes(date, value, color = variable, size=2), se = FALSE) +
-    labs(title = "Wortfrequenzen (über alle Jahre)", x = "Zeit", y = "Frequenz") +
-    theme(text = element_text(size=18)))) 
+    labs(title = "Wortfrequenzen (über alle Jahre)", x = "Zeit", y = "Frequenz"))
 }
 
 renderBarchart <- function(words, pres, years_start, years_end) {
@@ -80,10 +79,9 @@ renderBarchart <- function(words, pres, years_start, years_end) {
   
   dataframe <- data.frame(word = words, count = wordcount)
   
-  return(ggplotly(ggplot(data = dataframe, aes(x = word, y = count)) +
+  return(ggplot(data = dataframe, aes(x = word, y = count)) +
     geom_bar(stat = "identity", aes(fill = count)) +
-    labs(title = "Wortfrequenzen (insgesamt)", x = "Wörter", y = "Frequenz") + 
-    theme(text=element_text(size=18))))
+    labs(title = "Wortfrequenzen (insgesamt)", x = "Wörter", y = "Frequenz"))
 }
 
 renderSentiment <- function(pres, years_start, years_end) {
@@ -101,7 +99,7 @@ renderSentiment <- function(pres, years_start, years_end) {
     summarize(sentiment = sum(value)) %>%
     ungroup()
   
-  return(ggplotly(ggplot(sentiment_data, aes(x = year, y = sentiment)) +
+  return(ggplot(sentiment_data, aes(x = year, y = sentiment)) +
     geom_line() +
     geom_point(aes(color = sentiment)) +
     scale_color_gradient2(low = "red", mid = "yellow", high = "green", midpoint = 0, name = "Sentimentwert") +
@@ -109,7 +107,7 @@ renderSentiment <- function(pres, years_start, years_end) {
       title = paste("Sentimentanalyse der Reden von:", pres),
       x = "Jahr",
       y = "Sentimentwert"
-    )))
+    ))
 }
 
 renderWordcloud <- function(years_start, years_end, lim) {

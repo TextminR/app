@@ -52,7 +52,7 @@ app_ui <- function(request) {
             h4("Weitere Diagramme"),
             checkboxInput("checkst", "Sentimentanalyse", FALSE),
           ),
-          mainPanel(plotlyOutput(outputId = "plot", height = "90vh"))
+          mainPanel(plotOutput(outputId = "plot", height = "90vh"))
         )
       ),
       tabPanel(
