@@ -85,7 +85,7 @@ renderTrendgraph <- function(data, words, pres, years_start, years_end) {
     return(NULL)
   }
   
-  filtered_data <- data
+  filtered_data <- prepare_data(data)
   filtered_data <- filter_pres(filtered_data, pres)
   filtered_data <- filter_year(filtered_data, years_start, years_end)
   
@@ -125,7 +125,7 @@ renderBarchart <- function(data, words, pres, years_start, years_end) {
     return(NULL)
   }
   
-  filtered_data <- data
+  filtered_data <- prepare_data(data)
   filtered_data <- filter_pres(filtered_data, pres)
   filtered_data <- filter_year(filtered_data, years_start, years_end)
   
@@ -175,9 +175,9 @@ renderSentiment <- function(data, pres, years_start, years_end) {
     geom_point(aes(color = sentiment)) +
     scale_color_gradient2(low = "red", mid = "yellow", high = "green", midpoint = 0, name = "Sentimentwert") +
     labs(
-      title = paste("Sentimentanalyse der Reden von:", pres),
-      x = "Jahr",
-      y = "Sentimentwert"
+     title = paste("Sentimentanalyse der Reden von:", pres),
+     x = "Jahr",
+     y = "Sentimentwert"
     ))
 }
 
@@ -195,7 +195,7 @@ renderWordcloud <- function(data, years_start, years_end, lim) {
   v <- tidytext::stop_words
   v <- v %>% filter(word != "states")
   
-  filtered_textdata <- filter_year(data, years_start, years_end)
+  filtered_textdata <- filter_year(prepare_data(data), years_start, years_end)
   
   words <- filtered_textdata %>%
     unnest_tokens(word, text, to_lower = TRUE) %>%
