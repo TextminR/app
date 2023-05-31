@@ -1,13 +1,3 @@
-fetch_data <- function() {
-  return(base::readRDS(url("https://slcladal.github.io/data/sotu_paragraphs.rda", "rb")))
-}
-
-prepare_data <- function(textdata) {
-  return(textdata %>%
-           group_by(speech_doc_id, date, president) %>%
-           summarise(text = paste(text, collapse = "")))
-}
-
 #' The application User-Interface
 #'
 #' @param request Internal parameter for `{shiny}`.
@@ -15,16 +5,21 @@ prepare_data <- function(textdata) {
 #' @import shiny
 #' @noRd
 
-library(plotly)
+#library(plotly)
 library(shinythemes)
+
+
 app_ui <- function(request) {
+  
+  # Calls 'fct_fetch_data.R', to obtain the data (right now textdata only consists of speeches of American presidents).
   textdata <- fetch_data()
-  golem_add_external_resources()
+  
+  # golem_add_external_resources()
   tagList(
     # Leave this function for adding external resources
     # Your application UI logic
     
-    navbarPage(theme= shinytheme("cerulean") ,"Prototyp",
+    navbarPage(theme= shinytheme("readable") ,"Prototyp",
       shinyjs::useShinyjs(),
                
       tabPanel(
@@ -90,19 +85,19 @@ app_ui <- function(request) {
 #' @import shiny
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @noRd
-golem_add_external_resources <- function() {
-  add_resource_path(
-    "www",
-    app_sys("app/www")
-  )
-  
-  tags$head(
-    favicon(),
-    bundle_resources(
-      path = app_sys("app/www"),
-      app_title = "textminRApp"
-    )
-    # Add here other external resources
-    # for example, you can add shinyalert::useShinyalert()
-  )
-}
+# golem_add_external_resources <- function() {
+#   add_resource_path(
+#     "www",
+#     app_sys("app/www")
+#   )
+#   
+#   tags$head(
+#     favicon(),
+#     bundle_resources(
+#       path = app_sys("app/www"),
+#       app_title = "textminRApp"
+#     )
+#     # Add here other external resources
+#     # for example, you can add shinyalert::useShinyalert()
+#   )
+# } 

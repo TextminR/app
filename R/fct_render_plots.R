@@ -5,15 +5,12 @@ library(tidytext)
 library(wordcloud2)
 library(dplyr)
 
-#' Title
+#' counts, how often a certain word appears in the textdata
 #'
-#' @param data 
-#' @param word 
+#' @param data the textdata
+#' @param word the word to filter for
 #'
-#' @return
-#' @export
-#'
-#' @examples
+#' @return textdata with count-column
 plooten <- function(data, word) {
   result <- data
   result <- result %>%
