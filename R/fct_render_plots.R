@@ -19,6 +19,13 @@ plooten <- function(data, word) {
   return(result)
 }
 
+zählen <- function(data, word){
+  result <- data
+  result <- result %>%
+    group_by(id, year, autor) %>%
+    summarise(year = year, "count" = str_count(text, word))
+  return(result)
+}
 
 #' Title
 #'
@@ -30,7 +37,7 @@ plooten <- function(data, word) {
 #'
 #' @examples
 merge_fun <- function(x, y) {
-  merge(x, y, by = c("speech_doc_id", "date", "president"), all = TRUE)
+  merge(x, y, by = c("id", "year", "autor"), all = TRUE)
 }
 
 #' Title
@@ -64,6 +71,12 @@ filter_pres <- function(data, pres){
   return (data %>% filter(president == pres))
 }
 
+zählen <- function(data, word){
+  result <- data
+  result <- result %>%
+    group_by(id, year, autor) %>%
+    summarise("count" = str_count(text, word))
+}
 
 #' Title
 #'
@@ -77,21 +90,22 @@ filter_pres <- function(data, pres){
 #'
 #' @examples
 renderTrendgraph <- function(data, words, pres, years_start, years_end) {
+  words <- "war, peace"
   words <- strsplit(words, ",")[[1]]
   if (!length(words)) {
     return(NULL)
   }
-  
-  filtered_data <- prepare_data(data)
-  filtered_data <- filter_pres(filtered_data, pres)
-  filtered_data <- filter_year(filtered_data, years_start, years_end)
+  years_start <- 1800
+  years_end <- 1900
+  res <- POST(str_glue('https://api.textminr.tech/getTextByYearBetween/?minYear={years_start}&maxYear={years_end}'))
+  data <- fromJSON(rawToChar(res$content))
   
   dfList <- list()
   i <- 1
   for (word in words) {
     if (!(str_replace_all(word, "[^[:alnum:]]", "")) == "") {
       word <- str_replace_all(word, "[^[:alnum:]]", "")
-      dfList[[i]] <- plooten(filtered_data, word)
+      dfList[[i]] <- zählen(data, word)
       i <- i + 1
     }
   }
@@ -99,10 +113,10 @@ renderTrendgraph <- function(data, words, pres, years_start, years_end) {
   merged <- Reduce(merge_fun, dfList)
   colnames(merged)[4:ncol(merged)] <- words
   merged2 <-
-    melt(merged, id.vars = c("speech_doc_id", "date", "president"))
+    melt(merged, id.vars = c("id", "year", "autor"))
   
   return (ggplot() +
-    geom_smooth(merged2, mapping = aes(date, value, color = variable), se = FALSE) +
+    geom_smooth(merged2, mapping = aes(year, value, color = variable), se = FALSE) +
     labs(title = "Wortfrequenzen (über alle Jahre)", x = "Zeit", y = "Frequenz"))
 }
 
